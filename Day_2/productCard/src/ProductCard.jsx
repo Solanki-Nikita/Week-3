@@ -1,8 +1,12 @@
 
 import React from "react";
 
+
+// ProductCard component to display product details
 export default function ProductCard({ title, price, image, description, onAddToCart }) {
   return (
+
+  // Card container with product details
     <div style={styles.card}>
       <img src={image} alt={title} style={styles.image} />
       <h2>{title}</h2>

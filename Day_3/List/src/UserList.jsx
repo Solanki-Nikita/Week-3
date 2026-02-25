@@ -1,14 +1,19 @@
 import React from 'react'
 
+// user list component that displays a list of users and products using map function 
 export default function UserList() {
     const users = ["Alice", "Bob", "Charlie", "David", "Eve"];
-   
+
+
+// product list with id, name and price
     const products = [
     { id: 1, name: "Laptop", price: 999 },
     { id: 2, name: "Smartphone", price: 499 },
     { id: 3, name: "Headphones", price: 199 }
     ]
-  return (
+  
+//Renders: - A list of users using Array.map()  (Basic mapping)
+    return (
     <div>
         <h2>User List</h2>
          <ul>
