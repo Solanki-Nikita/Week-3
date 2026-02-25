@@ -1,6 +1,6 @@
 import React from "react";
 import ProductCard from "./ProductCard";
-import "./assets/Headphones.jpg";
+import headphone from "./assets/HeadPhone.jpg";
 
 export default function App() {
   const handleAddToCart = (product) => {
@@ -12,7 +12,7 @@ export default function App() {
       <ProductCard
         title="Wireless Headphones"
         price={2999}
-        image="productCard/src/assets/headphones.jpg"
+        image={headphone}
         description="High quality noise cancelling headphones."
         onAddToCart={() => handleAddToCart("Wireless Headphones")}
       />
