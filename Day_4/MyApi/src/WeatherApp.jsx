@@ -1,77 +1,85 @@
-import React, { useState } from "react";
-import "./App.css";
+import { useState, useEffect } from "react";
 
-// The WeatherApp component is a functional component that allows users to search for the current weather in a specific city. 
-// It uses the useState hook to manage the state of the city input, weather data, loading status, and error messages.
-export default function WeatherApp() {
-  const [city, setCity] = useState("");
+export default function App() {
+  const [city, setCity] = useState("Delhi");
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-// The API_KEY variable is a placeholder for the actual API key that would be used to authenticate requests to the weather API.
-  const API_KEY = "YOUR_API_KEY";
-// The fetchWeather function is an asynchronous function that makes a network request to the weather API using the fetch() function.
- const fetchWeather = async () => {
-  if (!city.trim()) {
-    setError("Enter a city name");
-    return;
-  }
+  const [error, setError] = useState(null);
 
-  try {
-    setLoading(true);
-    setError("");
+  const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY;
 
-    const response = await fetch(
-      `https://openweathermap.org/api/weather?q=${city}&appid=${API_KEY}&units=metric`
-    );
+  useEffect(() => {
+    if (!city) return;
 
-    const data = await response.json();
-    console.log(data); // DEBUG
+    const fetchWeather = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-    if (data.cod !== 200) {
-      throw new Error(data.message);
-    }
+        const res = await fetch(
+          `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}`
+        );
 
-    setWeather(data);
-  } catch (err) {
-    setError(err.message);
-    setWeather(null);
-  } finally {
-    setLoading(false);
-  }
-};
+        if (!res.ok) {
+          throw new Error("City not found");
+        }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+        const data = await res.json();
+        setWeather(data);
+      } catch (err) {
+        setError(err.message);
+        setWeather(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchWeather();
-    setCity(""); // clear input after submit
-  };
+  }, [city]);
 
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
+    <div style={styles.container}>
       <h2>Weather App</h2>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={city}
-          placeholder="Enter city"
-          onChange={(e) => setCity(e.target.value)}
-        />
-        <button type="submit">Search</button>
-      </form>
+      <input
+        type="text"
+        value={city}
+        onChange={(e) => setCity(e.target.value)}
+        placeholder="Enter city"
+        style={styles.input}
+      />
 
       {loading && <p>Loading...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {weather && (
-        <div>
+      {weather && !loading && (
+        <div style={styles.card}>
           <h3>{weather.name}</h3>
-          <p>Temperature: {weather.main.temp}°C</p>
-          <p>Condition: {weather.weather[0].description}</p>
+          <p>Temperature: {weather.main.temp} °C</p>
           <p>Humidity: {weather.main.humidity}%</p>
+          <p>Condition: {weather.weather[0].description}</p>
+          <p>Wind Speed: {weather.wind.speed} m/s</p>
         </div>
       )}
     </div>
   );
 }
+
+const styles = {
+  container: {
+    textAlign: "center",
+    marginTop: "50px",
+    fontFamily: "Arial"
+  },
+  input: {
+    padding: "8px",
+    marginBottom: "20px",
+    width: "200px"
+  },
+  card: {
+    border: "1px solid #ccc",
+    padding: "20px",
+    borderRadius: "8px",
+    display: "inline-block"
+  }
+};
